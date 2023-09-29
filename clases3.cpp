@@ -37,13 +37,16 @@ public:
     }
 
     Vendedor(){ 
-        auto total = 0.0;
-      for(const auto& venta : VENTAS){
-            total += venta.second; 
-        }
- 		}
+
+    for(int i=0; i <= 12; i++){
+        VENTAS.push_back({"", 0.0});
+    }
+
+    }
 
 };
+
+desplegar
 
 
 int main(){
