@@ -1,4 +1,5 @@
 #include <iostream>
+#include "queue.h"
 
 using namespace std;
 
@@ -9,7 +10,6 @@ private:
     T *value;
     TreeNode<T> *leftNode;
     TreeNode<T> *rightNode;
-
 public:
     TreeNode<T>()
     {
@@ -41,16 +41,21 @@ class BST
 {
 private:
     TreeNode<T> *rootNode;
-
+    List<T> *markedNodes;
+    Queue<TreeNode<T> *> *queue;
+    void privBFS(TreeNode<T> *node);
 public:
-    BST<T>() { rootNode = NULL; }
+    BST<T>() { rootNode = NULL; markedNodes=NULL; queue = NULL; }
     bool addValue(T *value);
     bool findValue(T *value);
     bool removeValue(T *value);
     int compareNodeValues(T *v1, T *v2);
     void display();
     void InOrder(TreeNode<T> *node);
-    int getNodeCount(TreeNode<T> *node);
+    // nuevos
+    int count();
+    int count_rec(TreeNode<T> *node);
+  	void BFS();
 };
 
 template <class T>
@@ -110,18 +115,15 @@ template <class T>
 void BST<T>::display()
 {
     InOrder(rootNode);
-    cout << "\nsobran " << getNodeCount(rootNode) << " nodos" << endl;
 }
 
 template <class T>
 void BST<T>::InOrder(TreeNode<T> *node)
 {
-    int count = 0;
     if (node == NULL)
         return;
     InOrder(node->getLeftNode());
     cout << *(node->getValue()) << " ";
-    count++;
     InOrder(node->getRightNode());
 }
 
@@ -132,7 +134,7 @@ bool BST<T>::removeValue(T *value)
     while (currentNode != NULL)
     {
         if (compareNodeValues(value, currentNode->getValue()) == 0)
-        { // ya lo encontramos
+        {   // ya lo encontramos
             // es un nodo hoja
             if (currentNode->getLeftNode() == NULL && currentNode->getRightNode() == NULL)
             {
@@ -151,20 +153,14 @@ bool BST<T>::removeValue(T *value)
             // es un nodo con dos hijos
             if (currentNode->getLeftNode() != NULL && currentNode->getRightNode() != NULL)
             {
-                // en busca del predecesor
+                cout<<"Nodo con dos hijos"<<endl;
+                // en busca del predecesor, se mueve a la izquierda del nodo actual
+                TreeNode<T> *prevP = currentNode; // Estaba como NULL y después de la siguiente línea
                 TreeNode<T> *p = currentNode->getLeftNode();
-                TreeNode<T> *prevP = NULL;
-
-                // Finding the predecessor without a while loop
-                if (currentNode->getLeftNode() != NULL)
+                while (p->getRightNode() != NULL) // todo a la derecha
                 {
-                    prevP = currentNode;
-                    p = currentNode->getLeftNode();
-                    while (p->getRightNode() != NULL)
-                    {
-                        prevP = p;
-                        p = p->getRightNode();
-                    }
+                    prevP = p;
+                    p->getRightNode();
                 }
                 currentNode->setValue(p->getValue());
                 // desconectar el predecesor
@@ -174,7 +170,7 @@ bool BST<T>::removeValue(T *value)
                     {
                         if (p == prevP->getLeftNode())
                             prevP->setLeftNode(currentNode->getLeftNode());
-                        else
+                        else 
                             prevP->setRightNode(currentNode->getLeftNode());
                     }
                 }
@@ -224,15 +220,47 @@ bool BST<T>::removeValue(T *value)
     return false;
 }
 
+template <class T>
+int BST<T>::count() {
+    return count_rec(rootNode);
+}
 
+// basado en el recorrido InOrder
+template <class T>
+int BST<T>::count_rec(TreeNode<T> *node)
+{
+    if (node == NULL)
+        return 0;
+    int x=count_rec(node->getLeftNode());
+    int y=count_rec(node->getRightNode());
+    return (x+y+1);
+}
 
 template <class T>
-int BST<T>::getNodeCount(TreeNode<T>* root) {
-    if (root == NULL) {
-        return 0;
-    }
-    int leftCount = getNodeCount(root->getLeftNode());
-    int rightCount = getNodeCount(root->getRightNode());
-
-    return 1 + leftCount + rightCount;
+void BST<T>::BFS() {
+    markedNodes=new List<T>();
+    queue = new Queue<TreeNode<T> *> ();    
+    privBFS(rootNode);
+  
 }
+
+template <class T>
+void BST<T>::privBFS(TreeNode<T> *node) {
+  markedNodes->add(node->getValue());
+  cout<<node->getValue()<<endl;
+  queue->enqueue(node);
+  while (!queue->isEmpty()) {
+  	TreeNode<T> *u=queue->unqueue();
+    if ( u->getLeftNode()!=NULL && markedNodes->find(u->getLeftNode()->getValue())!=NULL ) {
+        markedNodes->add(node->getLeftNode()->getValue());
+        cout<<node->getLeftNode()->getValue()<<endl;
+        queue->enqueue(node->getLeftNode());
+    }
+	if ( u->getRightNode()!=NULL && markedNodes->find(u->getRightNode()->getValue())!=NULL ) {
+        markedNodes->add(node->getRightNode()->getValue());
+        cout<<node->getRightNode()->getValue()<<endl;
+        queue->enqueue(node->getRightNode());
+    }
+  }
+}
+

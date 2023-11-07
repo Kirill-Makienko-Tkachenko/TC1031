@@ -28,6 +28,10 @@ int main() {
         }
     } while (val != 0);
 
+    cout << "Recorriendo a la anchura " << endl;
+
+
+
     delete arbolito; // No olvides liberar la memoria del árbol antes de salir
 
     return 0;
