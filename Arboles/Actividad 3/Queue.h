@@ -1,21 +1,24 @@
-#include "listas_t.h"
+#include "../../listas_t.h"
+#include <iostream>
 
 template <class T>
 class Queue
 {
-
-    list<T> *list;
-
+private:
+    List<T> *list;
 public:
-    Queue() { list = new list<T>(); };
+    Queue() { list = new List<T>(); };
     void enqueue(T *value) { list->add(value); };
     T *dequeue()
     {
         if (list->isEmpty())
+        {
             return NULL;
-        T *val = list->getFirst()->getInfo();
+        }
+        T *value = list->getFirst()->getInfo();
         list->removeAt(0);
-        return val;
+        return value;
     };
-    ~Queue() { delete *list; }
+    bool isEmpty() { return list->isEmpty(); };
+    ~Queue() { delete list; };
 };

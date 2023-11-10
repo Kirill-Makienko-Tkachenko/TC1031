@@ -45,17 +45,18 @@ public:
     virtual Nodo<T> *getFirst();
     virtual Nodo<T> *getLast();
     virtual void removeByValue(T value);
-    virtual void removeAt(int index);
+    virtual bool removeAt(int index);
     //virtual Nodo<T> *find();
     virtual bool isEmpty();
     string toString() const;
+    bool find(T *value);
 private:
     Nodo<T> *first;
 };
 
 template <class T>
 void List<T>::add(T *value){
-    Nodo<T> *nodo = new Nodo<int>(value);
+    Nodo<T> *nodo = new Nodo<T>(value);
     if (first == NULL)
     {
         first = nodo;
@@ -108,7 +109,7 @@ void List<T>::removeByValue(T value){
         nodo = nodo->getSig();
     }
 }
-/*
+
 template <class T>
 bool List<T>::removeAt(int index){
     Nodo<T> *nodo = getFirst();
@@ -130,7 +131,7 @@ bool List<T>::removeAt(int index){
     }
     return false;
 }
-*/
+
 template <class T>
 string List<T>::toString() const {
     Nodo<int> *p = getFirst();
@@ -150,4 +151,33 @@ ostream& operator<< ( ostream& outs, const List<T>* obj ) {
     return outs << obj->toString();
 }
 
+template <class T>
+bool operator==(const List<T>& list1, const List<T>& list2) {
+    Nodo<T>* current1 = list1.getFirst();
+    Nodo<T>* current2 = list2.getFirst();
 
+    while (current1 != NULL && current2 != NULL) {
+        if (*(current1->getInfo()) != *(current2->getInfo())) {
+            return false;
+        }
+        current1 = current1->getSig();
+        current2 = current2->getSig();
+    }
+
+    return (current1 == NULL && current2 == NULL);
+}
+
+
+template <class T>
+bool List<T>::find(T *value){
+  Nodo<T> *nodo = getFirst();
+  Nodo<T> *anterior = NULL;
+  while (nodo != NULL) {
+  	if (nodo->getInfo() == value){
+          return true;	
+    }
+    anterior = nodo;
+    nodo = nodo->getSig();
+  }
+  return false;
+}

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "queue.h"
+#include "Queue.h"
 
 using namespace std;
 
@@ -42,7 +42,7 @@ class BST
 private:
     TreeNode<T> *rootNode;
     List<T> *markedNodes;
-    Queue<TreeNode<T> *> *queue;
+    Queue<TreeNode<T>> *queue;
     void privBFS(TreeNode<T> *node);
 public:
     BST<T>() { rootNode = NULL; markedNodes=NULL; queue = NULL; }
@@ -56,6 +56,14 @@ public:
     int count();
     int count_rec(TreeNode<T> *node);
   	void BFS();
+    void PreOrder(TreeNode<T> *node);
+    void PostOrder(TreeNode<T> *node);
+    int showHeight();
+    int height(TreeNode<T> *a);
+    bool ancestors(TreeNode<T> *node, T *value);
+    void showAncestors(T *value);
+    int whatLevelAmI(T *value);
+    int findLevel(TreeNode<T> *node, T *value, int level);
 };
 
 template <class T>
@@ -239,7 +247,7 @@ int BST<T>::count_rec(TreeNode<T> *node)
 template <class T>
 void BST<T>::BFS() {
     markedNodes=new List<T>();
-    queue = new Queue<TreeNode<T> *> ();    
+    queue = new Queue<TreeNode<T>> ();    
     privBFS(rootNode);
   
 }
@@ -247,20 +255,114 @@ void BST<T>::BFS() {
 template <class T>
 void BST<T>::privBFS(TreeNode<T> *node) {
   markedNodes->add(node->getValue());
-  cout<<node->getValue()<<endl;
+  cout<<*(node->getValue())<<endl;
   queue->enqueue(node);
   while (!queue->isEmpty()) {
-  	TreeNode<T> *u=queue->unqueue();
-    if ( u->getLeftNode()!=NULL && markedNodes->find(u->getLeftNode()->getValue())!=NULL ) {
-        markedNodes->add(node->getLeftNode()->getValue());
-        cout<<node->getLeftNode()->getValue()<<endl;
-        queue->enqueue(node->getLeftNode());
+  	TreeNode<T> *u=queue->dequeue();
+    if ( u->getLeftNode()!=NULL && !markedNodes->find(u->getLeftNode()->getValue()) ) {
+        markedNodes->add(u->getLeftNode()->getValue());
+        cout<<*(u->getLeftNode()->getValue())<<endl;
+        queue->enqueue(u->getLeftNode());
     }
-	if ( u->getRightNode()!=NULL && markedNodes->find(u->getRightNode()->getValue())!=NULL ) {
-        markedNodes->add(node->getRightNode()->getValue());
-        cout<<node->getRightNode()->getValue()<<endl;
-        queue->enqueue(node->getRightNode());
+	if ( u->getRightNode()!=NULL && !markedNodes->find(u->getRightNode()->getValue()) ) {
+        markedNodes->add(u->getRightNode()->getValue());
+        cout<<*(u->getRightNode()->getValue())<<endl;
+        queue->enqueue(u->getRightNode());
     }
+    //cin.get();
   }
 }
 
+
+
+
+
+template <class T>
+void BST<T>::PreOrder(TreeNode<T> *node) {
+    if (node == NULL) return;
+    cout << *(node->getValue()) << endl; 
+    PreOrder(node->getLeftNode());      
+    PreOrder(node->getRightNode());     
+}
+
+template <class T>
+void BST<T>::PostOrder(TreeNode<T> *node) {
+    if (node == NULL) return;
+    PostOrder(node->getLeftNode());     
+    PostOrder(node->getRightNode());    
+    cout << *(node->getValue()) << endl; 
+}
+
+template <class T>
+int BST<T>::showHeight() {
+    return height(rootNode);
+}
+
+template <class T>
+int BST<T>::height(TreeNode<T> *a) {
+    if (a == NULL)
+        return -1; // or return 0, depending on your definition of the height of an empty subtree
+
+    int leftHeight = height(a->getLeftNode());
+    int rightHeight = height(a->getRightNode());
+
+    return max(leftHeight, rightHeight) + 1;
+}
+
+template <class T>
+bool BST<T>::ancestors(TreeNode<T> *node, T *value)
+{
+    if (node == NULL)
+        return false;
+
+    if (*(node->getValue()) == *value)
+        return true;
+
+    if (ancestors(node->getLeftNode(), value) || ancestors(node->getRightNode(), value))
+    {
+        cout << *(node->getValue()) << endl;
+        return true;
+    }
+
+    return false; 
+}
+template <class T>
+void BST<T>::showAncestors(T *value) {
+    ancestors(rootNode, value);
+}
+
+template <class T>
+int BST<T>::whatLevelAmI(T *value) {
+    return findLevel(rootNode, value, 0);
+}
+
+template <class T>
+int BST<T>::findLevel(TreeNode<T> *node, T *value, int level) {
+    if (node == NULL)
+        return -1; // Return -1 if the value is not found
+
+    if (*(node->getValue()) == *value)
+        return level;
+
+    // Search in the left subtree
+    int leftLevel = findLevel(node->getLeftNode(), value, level + 1);
+    if (leftLevel != -1) // If found in left subtree, return the level
+        return leftLevel;
+
+    // Search in the right subtree
+    return findLevel(node->getRightNode(), value, level + 1);
+}
+
+template <class T>
+bool operator==(const TreeNode<T>& list1, const TreeNode<T>& list2) {
+    TreeNode<T> current1 = list1;
+    TreeNode<T> current2 = list2;
+
+    while (current1.getValue() != NULL && current2.getValue() != NULL) {
+        if (*(current1.getValue()) != *(current2.getValue())) {
+            return false;
+        }
+    }
+
+    return (current1.getValue() == NULL && current2.getValue() == NULL);
+}

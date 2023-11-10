@@ -28,9 +28,21 @@ int main() {
         }
     } while (val != 0);
 
+    int numero = 19;
+
     cout << "Recorriendo a la anchura " << endl;
 
+    cout << "mostrando ancestros del numero 19" << endl;
+    arbolito->showAncestors(&numero);
 
+    cout << "mostrando nivel del arbol" << endl;
+    cout << arbolito->showHeight() << endl;
+
+    cout << "en que nivel se encientra el numero 19" << endl;
+    cout << arbolito->whatLevelAmI(&numero) << endl;
+
+    cout << "Recorriendo el arbol por niveles" << endl;
+    arbolito->BFS();
 
     delete arbolito; // No olvides liberar la memoria del árbol antes de salir
 

@@ -43,6 +43,8 @@ public:
     virtual bool isEmpty();
     // O(n) - Lineal
     string toString() const;
+
+     bool find(T *value);
 private:
     Nodo<T> *first;
 };
@@ -117,4 +119,19 @@ string List<T>::toString() const {
 template <class T>
 ostream& operator<< (ostream& outs, const List<T>& obj) {
     return outs << obj.toString();
+}
+
+
+template <class T>
+bool List<T>::find(T *value){
+  Nodo<T> *nodo = getFirst();
+  Nodo<T> *anterior = NULL;
+  while (nodo != NULL) {
+  	if (nodo->getInfo() == value){
+          return true;	
+    }
+    anterior = nodo;
+    nodo = nodo->getSig();
+  }
+  return false;
 }
