@@ -9,20 +9,27 @@ template <class T>
 class Nodo {
 public: 
     // O(1) - Constante
-    Nodo(T *info, Nodo<T> *sig) : Info(info), Sig(sig) {}
+    Nodo(T *info, T *info2, Nodo<T> *sig) : Info(info), Info2(info2), Sig(sig) {}
     // O(1) - Constante
     Nodo(T *info) : Sig(NULL), Info(info) {}
+
+    Nodo(T *info, Nodo<T> *sig) : Sig(sig), Info(info) {}
     // O(1) - Constante
     virtual void setSig(Nodo<T> *sig) { Sig = sig; }
     // O(1) - Constante
     virtual void setInfo(T *info) { Info = info; }
+
+    virtual void setInfo2(T *info2) { Info2 = info2; }
     // O(1) - Constante
     virtual Nodo<T> *getSig() { return Sig; }
     // O(1) - Constante
     virtual T *getInfo() { return Info; }
+
+    virtual T *getInfo2() { return Info2; }
 private:
     Nodo<T> *Sig;
     T *Info;
+    T* info2;
 };
 
 // List class definition
@@ -33,6 +40,8 @@ public:
     List() : first(NULL) {}
     // O(n) - Lineal (en el peor caso)
     virtual void add(T *value);
+
+    virtual void addBoth(T *value, T *value2);
     // O(1) - Constante
     virtual Nodo<T> *getFirst();
     // O(n) - Lineal (en el peor caso)
@@ -52,6 +61,17 @@ private:
 template <class T>
 void List<T>::add(T *value) {
     Nodo<T> *nodo = new Nodo<T>(value);
+    if (first == NULL) {
+        first = nodo;
+    } else {
+        Nodo<T> *ultimateTeam = getLast();
+        ultimateTeam->setSig(nodo);
+    }
+}
+
+template <class T>
+void List<T>::addBoth(T *value, T *value2) {
+    Nodo<T> *nodo = new Nodo<T>(value, value2);
     if (first == NULL) {
         first = nodo;
     } else {
