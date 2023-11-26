@@ -57,6 +57,7 @@ public:
 	}
     void printGraph();
     void DFS(int v);   
+    void BFS(int s);
 };
 
 // Function to print adjacency list representation of a graph
@@ -101,6 +102,42 @@ void Graph::recDFS(int v, vector<bool> &discovered)
         // si aún no se ha descubierto `u`
         if (!discovered[u]) {
             recDFS(u, discovered);
+        }
+    }
+}
+
+
+void Graph::BFS(int s)
+{   //Adjusted for our graph class, taken from: https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/
+
+    // Mark all the vertices as not visited
+    vector<bool> discovered;
+    discovered.resize( adjList.size() );
+
+    // Create a queue for BFS
+    vector<int> queue;
+ 
+    // Mark the current node as visited and enqueue it
+    
+    queue.push_back(s);
+    discovered[s]=true;
+ 
+    while (!queue.empty()) {
+ 
+        // Dequeue a vertex from queue and print it
+        s = queue.front();
+        cout << s << " ";
+        queue.erase(queue.begin());
+ 
+        // Get all adjacent vertices of the dequeued
+        // vertex s.
+        // If an adjacent has not been visited,
+        // then mark it visited and enqueue it
+        for (auto adjacent : adjList[s]) {
+            if (!discovered[adjacent]) {
+                discovered[adjacent] = true;
+                queue.push_back(adjacent);
+            }
         }
     }
 }
